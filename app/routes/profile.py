@@ -18,6 +18,9 @@ from app.database import get_db
 from app.utils import get_current_user, hash_password, verify_password
 from database import models
 
+UPLOAD_PROFILE_DIR = os.path.join("uploads", "profile_pics")
+os.makedirs(UPLOAD_PROFILE_DIR, exist_ok=True)
+
 router = APIRouter(prefix="/profile", tags=["Profile"])
 
 
@@ -57,12 +60,14 @@ async def update_profile(
             old_path = os.path.join("uploads", current_user.profile_image)
             if os.path.exists(old_path):
                 os.remove(old_path)
-            ext = profile_image.filename.split(".")[-1]
-            new_filename = f"profile_{uuid.uuid4()}.{ext}"
-            file_path = os.path.join("UPLOAD_DIR", new_filename)
-            with open(file_path, "wb") as f:
-                f.write(await profile_image.read())
-            current_user.profile_image = new_filename
+
+        ext = profile_image.filename.split(".")[-1]
+        new_filename = f"profile_{uuid.uuid4()}.{ext}"
+        file_path = os.path.join(UPLOAD_PROFILE_DIR, new_filename)
+        with open(file_path, "wb") as f:
+            f.write(await profile_image.read())
+
+        current_user.profile_image = new_filename
     db.commit()
     db.refresh(current_user)
     if current_user.profile_image:

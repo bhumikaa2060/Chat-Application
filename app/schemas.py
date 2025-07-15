@@ -52,9 +52,9 @@ class ChangePassword(BaseModel):
     new_password: Annotated[str, StringConstraints(min_length=6)]
 
 
-class CreateTable(BaseModel):
-    room_name: str
-    password: str | None = None
+# class CreateTable(BaseModel):
+#     room_name: str
+#     password: str | None = None
 
 
 class JoinRoom(BaseModel):

@@ -13,11 +13,12 @@ from app.schemas import UserLogin, UserResponse
 from app.utils import hash_password, verify_password
 from database.models import User
 
-from .. import config
-
 router = APIRouter()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+
+UPLOAD_DIR = os.path.join("uploads", "profile_pics")
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post("/register", response_model=UserResponse)
@@ -45,7 +46,7 @@ async def register(
     if profile_image:
         ext = profile_image.filename.split(".")[-1]
         profile_image_filename = f"profile_{uuid.uuid4()}.{ext}"
-        file_path = os.path.join(config.UPLOAD_DIR, profile_image_filename)
+        file_path = os.path.join(UPLOAD_DIR, profile_image_filename)
         with open(file_path, "wb") as f:
             f.write(await profile_image.read())
     hashed_pw = hash_password(password)

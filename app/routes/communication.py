@@ -241,7 +241,7 @@ html = """
 </html>
 """
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = os.path.join("uploads", "messages")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 

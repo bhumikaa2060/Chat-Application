@@ -2,9 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.config import UPLOAD_DIR
 from app.database import engine
-from app.routes import auth, chats, communication, profile, search,user_to_user
+
+from app.routes import auth, chats, communication, home, profile, search, user_to_user
+
 from database.models import Base
 
 Base.metadata.create_all(bind=engine)
@@ -31,8 +32,11 @@ app.include_router(user_to_user.router)
 
 app.mount(
     "/profile_images",
-    StaticFiles(directory=UPLOAD_DIR),  # app/uploads/profile_pics/
+    StaticFiles(directory=profile.UPLOAD_PROFILE_DIR),  # app/uploads/profile_pics/
     name="profile_images",
 )
 
+
+app.include_router(home.router)
+app.include_router(user_to_user.router)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

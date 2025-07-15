@@ -68,21 +68,3 @@ def check_user_inroom(userid: int, roomid: int, db: Session):
 def verify_user(id: int, db: Session):
     userexist = db.query(User).filter_by(id=id).first()
     return userexist is not None
-
-
-def decode_token(token: str, db: Session):
-    try:
-        if token.lower().startswith("bearer "):
-            token = token[7:]
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id = int(payload.get("sub"))
-        print(f"user_id from token: {user_id}")
-        user = db.query(User).filter_by(id=user_id).first()
-        if not user:
-            raise ValueError("User not found")
-        return user
-    except jwt.ExpiredSignatureError:
-        raise ValueError("Token has expired")
-    except Exception as e:
-        print("Token decode error:", str(e))
-        raise ValueError("Invalid or missing token")
