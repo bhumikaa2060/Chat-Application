@@ -63,13 +63,13 @@ async def create_table(
 
 
 @router.get("/getgroups")
-def get_room(db: Session = Depends(get_db)):
+def get_room(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     chat_rooms = db.query(Chatroom).all()
     
     room_list = [{
         "id": room.id,
         "name": room.roomname,
-        "image_url": None  # This can be None/null
+        "image_url": room.image
     } for room in chat_rooms]
 
     return {"rooms": room_list}

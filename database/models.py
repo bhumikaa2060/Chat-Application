@@ -32,8 +32,6 @@ class User(Base):
     password = Column(String, nullable=False)
     profile_image = Column(String, nullable=True)
     created_at = Column(DateTime, default=func.now())
-    file_url = Column(String, nullable=True)
-    file_type = Column(String, nullable=True)
 
     # One-to-many: User can create many chatrooms
     chatrooms = relationship("Chatroom", back_populates="creator")
