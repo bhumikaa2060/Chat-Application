@@ -4,19 +4,11 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
-<<<<<<< HEAD
-    Enum,
-=======
->>>>>>> safe-backup-before-merge
     ForeignKey,
     Integer,
     String,
     Text,
-<<<<<<< HEAD
-    func,
-=======
     func, Enum,
->>>>>>> safe-backup-before-merge
 )
 from sqlalchemy.orm import declarative_base, relationship
 
@@ -27,11 +19,6 @@ class MessageStatus(str, enum.Enum):
     sent = "sent"
     delivered = "delivered"
     read = "read"
-<<<<<<< HEAD
-
-=======
-
->>>>>>> safe-backup-before-merge
 
 class User(Base):
     __tablename__ = "users"
@@ -115,8 +102,4 @@ class Message(Base):
     receiver = relationship(
         "User", back_populates="messages_received", foreign_keys=[receiver_id]
     )
-<<<<<<< HEAD
     room = relationship("Chatroom", back_populates="messages")
-=======
-    room = relationship("Chatroom", back_populates="messages")
->>>>>>> safe-backup-before-merge
