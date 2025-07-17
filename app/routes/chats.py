@@ -37,20 +37,18 @@ async def create_table(
         ext = os.path.splitext(image.filename)[1]
         filename = f"{uuid4().hex}{ext}"
         file_path = os.path.join(UPLOAD_DIR, filename)
-        print("File path:",file_path)
+        print("File path:", file_path)
         with open(file_path, "wb") as f:
             f.write(await image.read())
-        
+
         file_url = f"/{UPLOAD_DIR}/{filename}"
     # Step 1: Create chatroom
     new_room = Chatroom(
-
         roomname=room_name,
         is_private=is_private,
         created_by=user.id,
         password=hashed_password,
         image=file_url,
-
     )
     db.add(new_room)
     db.commit()
@@ -67,15 +65,13 @@ async def create_table(
 @router.get("/getgroups")
 def get_room(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     chat_rooms = db.query(Chatroom).all()
-    
-    room_list = [{
-        "id": room.id,
-        "name": room.roomname,
-        "image_url": room.image
-    } for room in chat_rooms]
+
+    room_list = [
+        {"id": room.id, "name": room.roomname, "image_url": room.image}
+        for room in chat_rooms
+    ]
 
     return {"rooms": room_list}
-
 
 
 @router.post("/joingroup")
@@ -170,7 +166,7 @@ async def update_group_image(
 
     # Remove old image if requested
     if remove_image and chatroom.image:
-        old_path = os.path.join(UPLOAD_FOLDER, chatroom.image)
+        old_path = os.path.join(UPLOAD_DIR, chatroom.image)
         if os.path.exists(old_path):
             os.remove(old_path)
         chatroom.image = None
@@ -180,7 +176,7 @@ async def update_group_image(
         print("Uploading new image:", new_image.filename)
         ext = os.path.splitext(new_image.filename)[1]
         filename = f"{uuid4().hex}{ext}"
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file_path = os.path.join(UPLOAD_DIR, filename)
         try:
             with open(file_path, "wb") as f:
                 f.write(await new_image.read())
@@ -189,7 +185,7 @@ async def update_group_image(
             raise HTTPException(status_code=500, detail="Image upload failed")
         # Delete previous image if any
         if chatroom.image:
-            old_path = os.path.join(UPLOAD_FOLDER, chatroom.image)
+            old_path = os.path.join(UPLOAD_DIR, chatroom.image)
             if os.path.exists(old_path):
                 os.remove(old_path)
 

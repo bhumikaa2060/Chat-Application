@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Query
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -9,7 +10,10 @@ router = APIRouter(prefix="/search", tags=["Search"])
 
 @router.get("/users")
 def search_users(query: str = Query(..., min_length=1), db: Session = Depends(get_db)):
-    return db.query(User).filter(User.username.ilike(f"{query}%")).limit(10).all()
+    # Create full name expression
+    full_name = func.concat_ws(" ", User.first_name, User.middle_name, User.last_name)
+
+    return db.query(User).filter(full_name.ilike(f"%{query}%")).limit(10).all()
 
 
 @router.get("/rooms")
@@ -23,10 +27,13 @@ def search_rooms(query: str = Query(..., min_length=1), db: Session = Depends(ge
 def search_users_in_room(
     room_id: int, query: str = Query(..., min_length=1), db: Session = Depends(get_db)
 ):
+    full_name = func.concat_ws(" ", User.first_name, User.middle_name, User.last_name)
+
     return (
         db.query(User)
         .join(RoomMembers)
-        .filter(RoomMembers.room_id == room_id, User.username.ilike(f"{query}%"))
+        .filter(RoomMembers.room_id == room_id)
+        .filter(full_name.ilike(f"%{query}%"))
         .limit(10)
         .all()
     )

@@ -1,13 +1,12 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.database import engine
-
 from app.routes import auth, chats, communication, home, profile, search, user_to_user
-
 from database.models import Base
-import os
 
 Base.metadata.create_all(bind=engine)
 
@@ -15,6 +14,8 @@ app = FastAPI()
 origins = [
     "http://127.0.0.1:8000",
     "http://localhost:8000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
 ]
 
 app.add_middleware(
@@ -39,14 +40,18 @@ app.mount(
 
 app.mount(
     "/uploads/messages",  # URL path where files can be accessed
-    StaticFiles(directory=os.path.join("uploads", "messages")),  # Correct path to the 'uploads/messages' directory
-    name="message_files"
+    StaticFiles(
+        directory=os.path.join("uploads", "messages")
+    ),  # Correct path to the 'uploads/messages' directory
+    name="message_files",
 )
 
 app.mount(
     "/uploads/group-image",  # URL path where files can be accessed
-    StaticFiles(directory=os.path.join("uploads", "group-image")),  # Correct path to the 'uploads/messages' directory
-    name="group-images"
+    StaticFiles(
+        directory=os.path.join("uploads", "group-image")
+    ),  # Correct path to the 'uploads/messages' directory
+    name="group-images",
 )
 
 app.include_router(home.router)
