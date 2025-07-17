@@ -16,8 +16,8 @@ from database.models import Chatroom, RoomMembers, User
 
 router = APIRouter()
 
-UPLOAD_FOLDER = os.path.join("uploads", "group-image")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+UPLOAD_DIR = "uploads/group-image"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 @router.post("/creategroup")
@@ -36,10 +36,12 @@ async def create_table(
     if image:
         ext = os.path.splitext(image.filename)[1]
         filename = f"{uuid4().hex}{ext}"
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file_path = os.path.join(UPLOAD_DIR, filename)
+        print("File path:",file_path)
         with open(file_path, "wb") as f:
             f.write(await image.read())
-
+        
+        file_url = f"/{UPLOAD_DIR}/{filename}"
     # Step 1: Create chatroom
     new_room = Chatroom(
 
@@ -47,7 +49,7 @@ async def create_table(
         is_private=is_private,
         created_by=user.id,
         password=hashed_password,
-        image=filename,
+        image=file_url,
 
     )
     db.add(new_room)

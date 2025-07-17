@@ -43,6 +43,12 @@ app.mount(
     name="message_files"
 )
 
+app.mount(
+    "/uploads/group-image",  # URL path where files can be accessed
+    StaticFiles(directory=os.path.join("uploads", "group-image")),  # Correct path to the 'uploads/messages' directory
+    name="group-images"
+)
+
 app.include_router(home.router)
 app.include_router(user_to_user.router)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
