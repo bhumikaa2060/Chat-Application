@@ -7,6 +7,7 @@ from app.database import engine
 from app.routes import auth, chats, communication, home, profile, search, user_to_user
 
 from database.models import Base
+import os
 
 Base.metadata.create_all(bind=engine)
 
@@ -36,6 +37,11 @@ app.mount(
     name="profile_images",
 )
 
+app.mount(
+    "/uploads/messages",  # URL path where files can be accessed
+    StaticFiles(directory=os.path.join("uploads", "messages")),  # Correct path to the 'uploads/messages' directory
+    name="message_files"
+)
 
 app.include_router(home.router)
 app.include_router(user_to_user.router)

@@ -114,7 +114,7 @@ html = """
 </html>
 """
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = "uploads/messages"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 usermanager = UserConnectionManager()
@@ -327,7 +327,7 @@ async def readstatus(websocket: WebSocket, messageid: int, receivertoken: str, d
             "timestamp": timestamp,
             "sender": f"{sender.first_name} {sender.last_name}",
             "content": msg.content,
-            "file_url": msg.file_url,
+            "file_url": f"messages/{msg.file_url}",
             "status": "read"
         }))
 
