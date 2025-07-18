@@ -22,6 +22,7 @@ from database.models import Chatroom, Message, RoomMembers, User
 
 
 def json_text(
+
     sender: str, message_id: int, text: str, ts: datetime | None = None
 ) -> dict:
     return {
@@ -71,6 +72,7 @@ def get_chatroom_info(
         "roomname": room.roomname,
         "creator": f"{creator.first_name} {creator.last_name}",
         "created_at": room.created_at.isoformat(),
+        "image_url": room.image,
     }
 
 
@@ -293,7 +295,7 @@ async def websocket_endpoint(
                 if data["type"] == "text":
                     stored_msg = store_and_return_message(userid, roomid, data["text"])
                     await manager.brodcast(
-                        f"Timestamp: {stored_msg['sent_at']}\n{stored_msg['user']}: {stored_msg['message']}",
+                        f"Timestamp: {stored_msg['sent_at']}\n{stored_msg['sender']}: {stored_msg['content']}",
                         roomid,
                     )
 
@@ -354,11 +356,7 @@ async def send_past_messages_to_user(websocket: WebSocket, roomid: int):
         )
 
         for content, id, file_url, file_type, first_name, last_name, sent_at in results:
-            payload = (
-                json_file(
-                    f"{first_name} {last_name}", id, file_url, content or "", sent_at
-                ),
-            )
+            payload = json_file(f"{first_name} {last_name}", id, file_url, content or "", sent_at)
             # if file_url:
             #     if content:
             #         message_text = f"Timestamp: {time}\n{first_name} {last_name} sent a file: {content} {file_url}"
